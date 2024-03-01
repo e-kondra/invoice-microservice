@@ -1,4 +1,8 @@
 package com.invoiceservice.invoiceservice.business.mappers;
 
-public class OrderDetailsMapStructMapper {
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring", uses = {
+        InvoiceMapStructMapper.class})
+public interface OrderDetailsMapStructMapper {
 }

@@ -3,7 +3,6 @@ package com.invoiceservice.invoiceservice.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +41,6 @@ public class CashReceipt {
     private Float amount;
 
     @ApiModelProperty(notes = "Invoice related cash receipt")
-    @NotNull
+    @NonNull
     private Invoice invoice;
 }

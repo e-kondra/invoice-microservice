@@ -1,4 +1,4 @@
 package com.invoiceservice.invoiceservice.business.service;
 
-public interface OrderDetailsSErvice {
+public interface DocumentNumberService {
 }

@@ -32,7 +32,7 @@ public class OrderDetails {
     @Positive
     private float price;
 
-    @ApiModelProperty(notes = "job price")
+    @ApiModelProperty(notes = "job quantity")
     @NotNull
     @Positive
     private int quantity;

@@ -1,0 +1,1 @@
+INSERT INTO document_number (document_number_id, invoice_number, cash_receipt_number) VALUES (1L, 10, 6);

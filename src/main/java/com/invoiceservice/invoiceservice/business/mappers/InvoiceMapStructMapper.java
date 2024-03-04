@@ -30,7 +30,7 @@ public interface InvoiceMapStructMapper {
             @Mapping(target = "orderDetailsIds", source = "orderDetailsIds", qualifiedByName = "orderDetailsIds"),
             @Mapping(target = "cashReceiptIds", source = "cashReceiptIds", qualifiedByName = "CashReceiptIds")
     })
-    InvoiceDAO invoiceDAOToInvoice(Invoice invoice);
+    InvoiceDAO invoiceToInvoiceDAO(Invoice invoice);
 
     @Named("CashReceiptIds")
     default List<Long>  cashReceiptDAOSToCashReceiptIds(List<CashReceiptDAO> cashReceiptDAOS) {

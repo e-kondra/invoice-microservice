@@ -43,7 +43,7 @@ public class InvoiceDAO {
     private String clientName;
 
     @Column(name = "client_address")
-    private String address;
+    private String clientAddress;
 
     @Column(name = "client_code")
     private String clientCode;
@@ -63,5 +63,4 @@ public class InvoiceDAO {
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<CashReceiptDAO> CashReceiptIds;
-
 }

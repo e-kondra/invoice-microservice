@@ -50,6 +50,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceById;
     }
 
+    @Override
+    public void deleteInvoiceById(Long id) {
+        invoiceRepository.deleteById(id);
+        log.info("Invoice with id {} is deleted", id);
+    }
+
     private boolean hasNoMatch(Invoice invoice) {
         return invoiceRepository.findAll().stream()
                 .noneMatch(invoiceDAO -> !invoiceDAO.getId().equals(invoice.getId()) &&

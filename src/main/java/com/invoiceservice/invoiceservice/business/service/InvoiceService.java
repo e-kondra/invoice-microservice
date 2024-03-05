@@ -12,4 +12,6 @@ public interface InvoiceService {
     Invoice saveInvoice(Invoice invoice);
 
     Optional<Invoice> findInvoiceById(Long id);
+
+    void deleteInvoiceById(Long id);
 }

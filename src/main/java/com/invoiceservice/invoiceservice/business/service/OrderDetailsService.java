@@ -12,4 +12,6 @@ public interface OrderDetailsService {
     Optional<OrderDetails> findOrderDetailsById(Long id);
 
     OrderDetails saveOrderDetails(OrderDetails orderDetails);
+
+    void deleteOrderDetailsById(Long id);
 }

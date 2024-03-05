@@ -2,6 +2,7 @@ package com.invoiceservice.invoiceservice.web.controller;
 
 import com.invoiceservice.invoiceservice.business.service.InvoiceService;
 import com.invoiceservice.invoiceservice.business.service.OrderDetailsService;
+import com.invoiceservice.invoiceservice.model.CashReceipt;
 import com.invoiceservice.invoiceservice.model.Invoice;
 import com.invoiceservice.invoiceservice.model.OrderDetails;
 import com.invoiceservice.invoiceservice.swagger.DescriptionVariables;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -125,5 +127,28 @@ public class OrderDetailsController {
         service.saveOrderDetails(orderDetails);
         log.debug("Order details with id {} is updated: {}", id, orderDetails);
         return new ResponseEntity<>(orderDetails, HttpStatus.CREATED);
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "Deletes the Order details  by id",
+            notes = "Deletes the Order details if provided id exists",
+            response = OrderDetails.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = HTMLResponseMessages.HTTP_204_WITHOUT_DATA),
+            @ApiResponse(code = 404, message = HTMLResponseMessages.HTTP_404),
+            @ApiResponse(code = 500, message = HTMLResponseMessages.HTTP_500)})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteOrderDetailsById(@ApiParam(value = "The id of the Order details", required = true)
+                                                      @NonNull @PathVariable Long id) {
+        log.info("Delete Order details by passing ID, where ID is:{}", id);
+        Optional<OrderDetails> orderDetails = service.findOrderDetailsById(id);
+        if (!orderDetails.isPresent()) {
+            log.warn("Order details for delete with id {} is not found.", id);
+            return ResponseEntity.notFound().build();
+        }
+        service.deleteOrderDetailsById(id);
+        log.debug("Order details with id {} is deleted: {}", id, orderDetails);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

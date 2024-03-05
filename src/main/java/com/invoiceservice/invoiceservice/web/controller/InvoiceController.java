@@ -4,6 +4,7 @@ package com.invoiceservice.invoiceservice.web.controller;
 import com.invoiceservice.invoiceservice.business.service.InvoiceService;
 import com.invoiceservice.invoiceservice.business.service.impl.InvoiceServiceImpl;
 import com.invoiceservice.invoiceservice.model.Invoice;
+import com.invoiceservice.invoiceservice.model.OrderDetails;
 import com.invoiceservice.invoiceservice.swagger.DescriptionVariables;
 import com.invoiceservice.invoiceservice.swagger.HTMLResponseMessages;
 import io.swagger.annotations.Api;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -116,6 +118,28 @@ public class InvoiceController {
         invoiceService.saveInvoice(invoice);
         log.debug("Client with id {} is updated: {}", id, invoice);
         return new ResponseEntity<>(invoice, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "Deletes the invoice  by id",
+            notes = "Deletes the invoice if provided id exists",
+            response = Invoice.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = HTMLResponseMessages.HTTP_204_WITHOUT_DATA),
+            @ApiResponse(code = 404, message = HTMLResponseMessages.HTTP_404),
+            @ApiResponse(code = 500, message = HTMLResponseMessages.HTTP_500)})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteInvoiceById(@ApiParam(value = "The id of the invoice", required = true)
+                                                       @NonNull @PathVariable Long id) {
+        log.info("Delete invoice by passing ID, where ID is:{}", id);
+        Optional<Invoice> invoice = invoiceService.findInvoiceById(id);
+        if (!invoice.isPresent()) {
+            log.warn("Invoice for delete with id {} is not found.", id);
+            return ResponseEntity.notFound().build();
+        }
+        invoiceService.deleteInvoiceById(id);
+        log.debug("Invoice with id {} is deleted: {}", id, invoice);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

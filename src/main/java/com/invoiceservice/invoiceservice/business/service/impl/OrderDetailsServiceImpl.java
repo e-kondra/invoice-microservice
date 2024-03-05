@@ -58,6 +58,12 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
         return mapper.orderDetailsDAOToOrderDetails(detailsSaved);
     }
 
+    @Override
+    public void deleteOrderDetailsById(Long id) {
+        repository.deleteById(id);
+        log.info("Order Details with id {} is deleted", id);
+    }
+
     private boolean hasNoMatch(OrderDetails orderDetails) {
         return repository.findAll().stream()
                 .noneMatch(detailsDAO -> !detailsDAO.getId().equals(orderDetails.getId()) &&

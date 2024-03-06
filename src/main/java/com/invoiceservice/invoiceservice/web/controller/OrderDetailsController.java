@@ -2,7 +2,6 @@ package com.invoiceservice.invoiceservice.web.controller;
 
 import com.invoiceservice.invoiceservice.business.service.InvoiceService;
 import com.invoiceservice.invoiceservice.business.service.OrderDetailsService;
-import com.invoiceservice.invoiceservice.model.CashReceipt;
 import com.invoiceservice.invoiceservice.model.Invoice;
 import com.invoiceservice.invoiceservice.model.OrderDetails;
 import com.invoiceservice.invoiceservice.swagger.DescriptionVariables;

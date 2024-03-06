@@ -2,7 +2,6 @@ package com.invoiceservice.invoiceservice.business.repository;
 
 import com.invoiceservice.invoiceservice.business.repository.model.InvoiceDAO;
 import com.invoiceservice.invoiceservice.business.repository.model.OrderDetailsDAO;
-import com.invoiceservice.invoiceservice.model.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

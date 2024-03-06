@@ -16,4 +16,8 @@ public interface CashReceiptService {
     CashReceipt saveCashReceipt(CashReceipt cashReceipt);
 
     void deleteCashReceiptById(Long id);
+
+    CashReceipt updateCashReceipt(CashReceipt cashReceipt);
+
+    boolean isItLastCashReceipt (CashReceipt cashReceipt);
 }

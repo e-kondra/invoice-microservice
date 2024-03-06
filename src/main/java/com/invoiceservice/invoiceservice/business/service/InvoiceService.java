@@ -14,4 +14,6 @@ public interface InvoiceService {
     Optional<Invoice> findInvoiceById(Long id);
 
     void deleteInvoiceById(Long id);
+    Invoice updateInvoice(Invoice invoice);
+    boolean isItLastInvoice (Invoice invoice);
 }

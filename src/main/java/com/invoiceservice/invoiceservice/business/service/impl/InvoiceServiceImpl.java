@@ -3,6 +3,7 @@ package com.invoiceservice.invoiceservice.business.service.impl;
 import com.invoiceservice.invoiceservice.business.mappers.InvoiceMapStructMapper;
 import com.invoiceservice.invoiceservice.business.repository.InvoiceRepository;
 import com.invoiceservice.invoiceservice.business.repository.model.InvoiceDAO;
+import com.invoiceservice.invoiceservice.business.service.DocumentNumberService;
 import com.invoiceservice.invoiceservice.business.service.InvoiceService;
 import com.invoiceservice.invoiceservice.model.Invoice;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +25,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     InvoiceMapStructMapper mapper;
 
+    @Autowired
+    DocumentNumberService documentService;
+
+
+
     @Override
     public List<Invoice> findAllInvoices() {
         List<InvoiceDAO> invoiceDAOList = invoiceRepository.findAll();
@@ -39,8 +45,21 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         InvoiceDAO invoiceSaved = invoiceRepository.save(mapper.invoiceToInvoiceDAO(invoice));
         log.info("New invoice saved: {}", () -> invoiceSaved);
+        documentService.increaseInvoiceNumber();
         return mapper.invoiceDAOToInvoice(invoiceSaved);
     }
+
+    @Override
+    public Invoice updateInvoice(Invoice invoice) {
+        if (!hasNoMatch(invoice)) {
+            log.error("Invoice conflict exception is thrown: {}", HttpStatus.CONFLICT);
+            throw new HttpClientErrorException(HttpStatus.CONFLICT);
+        }
+        InvoiceDAO invoiceSaved = invoiceRepository.save(mapper.invoiceToInvoiceDAO(invoice));
+        log.info("New invoice saved: {}", () -> invoiceSaved);
+        return mapper.invoiceDAOToInvoice(invoiceSaved);
+    }
+
 
     @Override
     public Optional<Invoice> findInvoiceById(Long id) {
@@ -53,7 +72,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void deleteInvoiceById(Long id) {
         invoiceRepository.deleteById(id);
+        documentService.decreaseInvoiceNumber();
         log.info("Invoice with id {} is deleted", id);
+    }
+
+    @Override
+    public boolean isItLastInvoice (Invoice invoice){
+        return invoice.getNumber().equals(documentService.buildPreviousInvoiceNumber());
     }
 
     private boolean hasNoMatch(Invoice invoice) {

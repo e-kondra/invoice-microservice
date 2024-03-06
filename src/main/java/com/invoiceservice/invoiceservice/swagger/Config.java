@@ -35,7 +35,9 @@ public class Config {
                 new Tag(DescriptionVariables.ORDER_DETAILS,
                         "Controller used to get, create, update and delete order details"),
                 new Tag(DescriptionVariables.CASH_RECEIPT,
-                        "Controller used to get, create, update and delete cash receipt of invoice")
+                        "Controller used to get, create, update and delete cash receipt of invoice"),
+                new Tag(DescriptionVariables.DOCUMENT_NUMBER,
+                        "Controller used to get numbers of cash receipts and invoices")
         );
     }
     private ApiInfo apiInfo() {

@@ -2,10 +2,8 @@ package com.invoiceservice.invoiceservice.web.controller;
 
 import com.invoiceservice.invoiceservice.business.service.CashReceiptService;
 import com.invoiceservice.invoiceservice.business.service.InvoiceService;
-import com.invoiceservice.invoiceservice.business.service.OrderDetailsService;
 import com.invoiceservice.invoiceservice.model.CashReceipt;
 import com.invoiceservice.invoiceservice.model.Invoice;
-import com.invoiceservice.invoiceservice.model.OrderDetails;
 import com.invoiceservice.invoiceservice.swagger.DescriptionVariables;
 import com.invoiceservice.invoiceservice.swagger.HTMLResponseMessages;
 import io.swagger.annotations.Api;
@@ -141,7 +139,7 @@ public class CashReceiptController {
             log.warn("Cash receipt for update with id {} not found", id);
             return ResponseEntity.notFound().build();
         }
-        service.saveCashReceipt(cashReceipt);
+        service.updateCashReceipt(cashReceipt);
         log.debug("Cash receipt with id {} is updated: {}", id, cashReceipt);
         return new ResponseEntity<>(cashReceipt, HttpStatus.CREATED);
     }
@@ -164,8 +162,13 @@ public class CashReceiptController {
             log.warn("Cash receipt for delete with id {} is not found.", id);
             return ResponseEntity.notFound().build();
         }
-        service.deleteCashReceiptById(id);
-        log.debug("Cash receipt with id {} is deleted: {}", id, receipt);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (service.isItLastCashReceipt(receipt.get())) {
+            service.deleteCashReceiptById(id);
+            log.debug("Cash receipt with id {} is deleted: {}", id, receipt);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            log.debug("Cash receipt with id {}, {} couldn't be deleted", id, receipt.get().getNumber());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

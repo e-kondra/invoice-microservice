@@ -1,6 +1,5 @@
 package com.invoiceservice.invoiceservice.business.mappers;
 
-import com.invoiceservice.invoiceservice.business.repository.CashReceiptRepository;
 import com.invoiceservice.invoiceservice.business.repository.model.CashReceiptDAO;
 import com.invoiceservice.invoiceservice.model.CashReceipt;
 import org.mapstruct.Mapper;

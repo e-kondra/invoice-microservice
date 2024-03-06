@@ -1,10 +1,8 @@
 package com.invoiceservice.invoiceservice.web.controller;
 
-
-import com.invoiceservice.invoiceservice.business.service.InvoiceService;
+import com.invoiceservice.invoiceservice.business.service.DocumentNumberService;
 import com.invoiceservice.invoiceservice.business.service.impl.InvoiceServiceImpl;
 import com.invoiceservice.invoiceservice.model.Invoice;
-import com.invoiceservice.invoiceservice.model.OrderDetails;
 import com.invoiceservice.invoiceservice.swagger.DescriptionVariables;
 import com.invoiceservice.invoiceservice.swagger.HTMLResponseMessages;
 import io.swagger.annotations.Api;
@@ -115,8 +113,8 @@ public class InvoiceController {
             log.warn("Invoice for update with id {} not found", id);
             return ResponseEntity.notFound().build();
         }
-        invoiceService.saveInvoice(invoice);
-        log.debug("Client with id {} is updated: {}", id, invoice);
+        invoiceService.updateInvoice(invoice);
+        log.debug("Invoice with id {} is updated: {}", id, invoice);
         return new ResponseEntity<>(invoice, HttpStatus.CREATED);
     }
 
@@ -137,9 +135,15 @@ public class InvoiceController {
             log.warn("Invoice for delete with id {} is not found.", id);
             return ResponseEntity.notFound().build();
         }
-        invoiceService.deleteInvoiceById(id);
-        log.debug("Invoice with id {} is deleted: {}", id, invoice);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(invoiceService.isItLastInvoice(invoice.get())) {
+            invoiceService.deleteInvoiceById(id);
+            log.debug("Invoice with id {} is deleted: {}", id, invoice);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            log.debug("Invoice id={} Nr.{} couldn't be deleted", id, invoice.get().getNumber());
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
 }

@@ -1,7 +1,5 @@
 package com.invoiceservice.invoiceservice.business.repository.model;
 
-import com.invoiceservice.invoiceservice.model.Invoice;
-import io.swagger.annotations.ApiModelProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

@@ -23,7 +23,6 @@ public class Invoice {
     private static final String DATE_PATTERN = "^\\d{4}-\\d{2}-\\d{2}$";
 
     @ApiModelProperty(notes = "The unique id of the invoice")
-    @NonNull
     private Long id;
 
     @ApiModelProperty(notes = "Number of invoice")

@@ -2,6 +2,7 @@ package com.invoiceservice.invoiceservice.business.service.impl;
 
 import com.invoiceservice.invoiceservice.business.mappers.DocumentNumberMapStructMapper;
 import com.invoiceservice.invoiceservice.business.repository.DocumentNumberRepository;
+import com.invoiceservice.invoiceservice.business.repository.model.DocumentNumberDAO;
 import com.invoiceservice.invoiceservice.business.service.DocumentNumberService;
 import com.invoiceservice.invoiceservice.model.DocumentNumber;
 import lombok.extern.log4j.Log4j2;
@@ -33,47 +34,38 @@ public class DocumentNumberServiceImpl implements DocumentNumberService {
 
     @Override
     public String buildInvoiceNumber(DocumentNumber documentNumber) {
-        Optional<Integer> invoiceNum = Optional.of(documentNumber.getInvoiceNumber());
-        if(!invoiceNum.isEmpty())
-            return "T" + String.valueOf(LocalDate.now().getYear() % 100)
-                    + " Nr." + String.valueOf(documentNumber.getInvoiceNumber());
-        else return null;
+        return "T" + String.valueOf(LocalDate.now().getYear() % 100)
+                + " Nr." + String.valueOf(documentNumber.getInvoiceNumber());
     }
 
     @Override
     public String buildCashReceiptNumber(DocumentNumber documentNumber) {
-        Optional<Integer> receiptNum = Optional.of(documentNumber.getCashReceiptNumber());
-        if(!receiptNum.isEmpty())
-            return "Serija TET" + String.valueOf(LocalDate.now().getYear() % 100)
-                    + " Nr." + String.valueOf(documentNumber.getCashReceiptNumber());
-        else return null;
+        return "Serija TET" + String.valueOf(LocalDate.now().getYear() % 100)
+                + " Nr." + String.valueOf(documentNumber.getCashReceiptNumber());
     }
 
     public void increaseInvoiceNumber(){
         Optional<DocumentNumber> documentNumber = getDocumentNumber();
-        if(!documentNumber.isEmpty()){
-            documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() +1);
-        }
+        documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() +1);
+        repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
     }
+
     public void decreaseInvoiceNumber(){
         Optional<DocumentNumber> documentNumber = getDocumentNumber();
-        if(!documentNumber.isEmpty()){
-            documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() -1);
-        }
+        documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() -1);
+        repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
     }
 
     public void increaseCashReceiptNumber(){
         Optional<DocumentNumber> documentNumber = getDocumentNumber();
-        if(!documentNumber.isEmpty()){
-            documentNumber.get().setCashReceiptNumber(documentNumber.get().getCashReceiptNumber() +1);
-        }
+        documentNumber.get().setCashReceiptNumber(documentNumber.get().getCashReceiptNumber() +1);
+        repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
     }
 
     public void decreaseCashReceiptNumber(){
         Optional<DocumentNumber> documentNumber = getDocumentNumber();
-        if(!documentNumber.isEmpty()){
-            documentNumber.get().setCashReceiptNumber(documentNumber.get().getCashReceiptNumber() -1);
-        }
+        documentNumber.get().setCashReceiptNumber(documentNumber.get().getCashReceiptNumber() -1);
+        repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
     }
 
     public String buildPreviousInvoiceNumber() {

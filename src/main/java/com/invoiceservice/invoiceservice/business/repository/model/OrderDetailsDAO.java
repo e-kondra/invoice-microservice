@@ -38,7 +38,7 @@ public class OrderDetailsDAO {
 
     @Column(name = "quantity")
     @Positive
-    private Float quantity;
+    private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")

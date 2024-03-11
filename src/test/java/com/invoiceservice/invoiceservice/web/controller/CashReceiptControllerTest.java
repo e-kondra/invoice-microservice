@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.in;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -36,186 +35,227 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(InvoiceController.class)
-class InvoiceControllerTest {
+@WebMvcTest(CashReceiptController.class)
+class CashReceiptControllerTest {
+
+    public static String URL = "/api/v1/cash";
 
     @Autowired
-    private InvoiceController controller;
-    public static String URL = "/api/v1/invoice";
-    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private CashReceiptController controller;
+
     @MockBean
-    private InvoiceServiceImpl invoiceService;
-    @MockBean
-    private CashReceiptServiceImpl cashReceiptServiceImpl;
+    private CashReceiptServiceImpl service;
     @MockBean
     DocumentNumberServiceImpl documentNumberServiceImpl;
+    @MockBean
+    private InvoiceServiceImpl invoiceService;
     @MockBean
     private OrderDetailsServiceImpl orderDetailsServiceImpl;
 
 
-    @Test
-    void findAllInvoices() throws Exception {
-        List<Invoice> invoiceList = createInvoiceList();
 
-        when(invoiceService.findAllInvoices()).thenReturn(invoiceList);
+    @Test
+    void findCashReceiptsByInvoiceId() throws Exception{
+        List<CashReceipt> receiptList = createCashReceiptList();
+        Invoice invoice = createInvoice();
+        when(invoiceService.findInvoiceById(anyLong())).thenReturn(Optional.of(invoice));
+        when(service.findCashReceiptsByInvoice(invoice)).thenReturn(receiptList);
+
+        ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .get(URL + "/invoice/" + invoice.getId()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].number").value("T24 Nr.10"))
+                .andExpect(status().isOk());
+
+        verify(service,times(1)).findCashReceiptsByInvoice(invoice);
+    }
+
+    @Test
+    void findCashReceiptsByInvoiceIdInvalidInvoice() throws Exception{
+        Invoice invoice = null;
+        when(invoiceService.findInvoiceById(null)).thenReturn(Optional.empty());
+
+        ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get(URL + "/invoice/" + 1 ))
+                .andExpect(status().isNotFound());
+        verify(service,times(0)).findCashReceiptsByInvoice(invoice);
+    }
+    @Test
+    void findAllCashReceipts() throws Exception {
+        List<CashReceipt> receiptList = createCashReceiptList();
+
+        when(service.findAllCashReceipts()).thenReturn(receiptList);
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .get(URL))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].number").value("TET24 Nr.10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].number").value("T24 Nr.10"))
                 .andExpect(status().isOk());
 
-        verify(invoiceService, times(1)).findAllInvoices();
+        verify(service, times(1)).findAllCashReceipts();
     }
 
-
     @Test
-    void findInvoiceById() throws Exception {
-        Optional<Invoice> optionalInvoice = Optional.of(createInvoice());
+    void findCashReceiptById() throws Exception {
+        Optional<CashReceipt> optionalCashReceipt = Optional.of(createCashReceipt());
 
-        when(invoiceService.findInvoiceById(anyLong())).thenReturn(optionalInvoice);
+        when(service.findCashReceiptById(anyLong())).thenReturn(optionalCashReceipt);
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .get(URL + "/1"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.date").value("2024-03-07"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.number").value("TET24 Nr.10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.number").value("T24 Nr.10"))
                 .andExpect(status().isOk());
 
-        verify(invoiceService, times(1)).findInvoiceById(anyLong());
-
+        verify(service, times(1)).findCashReceiptById(anyLong());
     }
 
     @Test
-    void findInvoiceByIdInvalidId() throws Exception {
-        Optional<Invoice> optionalInvoice = Optional.of(createInvoice());
-        optionalInvoice.get().setId(null);
+    void findCashReceiptByIdInvalid() throws Exception {
 
-        when(invoiceService.findInvoiceById(anyLong())).thenReturn(Optional.empty());
+        when(service.findCashReceiptById(null)).thenReturn(Optional.empty());
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .get(URL + null)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        verify(invoiceService, times(0)).findInvoiceById(null);
+        verify(service, times(0)).findCashReceiptById(null);
     }
 
     @Test
-    void saveInvoice() throws Exception {
-        Invoice invoice = createInvoice();
-        invoice.setId(null);
+    void saveCashReceipt() throws Exception{
+        CashReceipt cashReceipt = createCashReceipt();
+        cashReceipt.setId(null);
 
-        when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
+        when(service.saveCashReceipt(cashReceipt)).thenReturn(cashReceipt);
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .post(URL)
-                        .content(asJsonString(invoice))
+                        .content(asJsonString(cashReceipt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        verify(invoiceService, times(1)).saveInvoice(invoice);
+        verify(service, times(1)).saveCashReceipt(cashReceipt);
     }
 
     @Test
-    void saveInvoiceInvalidBindingResult() throws Exception {
-        Invoice invoice = createInvoice();
-        invoice.setId(null);
+    void saveCashReceiptIncorrectBindingResult() throws Exception{
+        CashReceipt cashReceipt = createCashReceipt();
+        cashReceipt.setId(null);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        ResponseEntity<Invoice> noResult = controller.saveInvoice(invoice, bindingResult);
+        ResponseEntity<CashReceipt> noResult = controller.saveCashReceipt(cashReceipt, bindingResult);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, noResult.getStatusCode());
         Assertions.assertNull(noResult.getBody());
-        verifyNoInteractions(invoiceService);
+        verifyNoInteractions(service);
     }
 
 
     @Test
-    void updateInvoiceById() throws Exception {
-        Invoice invoice = createInvoice();
-        invoice.setCar("VOLKSWAGEN PASSAT AB123C");
+    void updateCashReceiptById() throws Exception{
 
-        when(invoiceService.updateInvoice(invoice)).thenReturn(invoice);
+        CashReceipt cashReceipt = createCashReceipt();
+
+        when(service.findCashReceiptById(cashReceipt.getId())).thenReturn(Optional.of(cashReceipt));
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .put(URL + "/1")
-                        .content(asJsonString(invoice))
+                        .content(asJsonString(cashReceipt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.car").value("VOLKSWAGEN PASSAT AB123C"))
                 .andExpect(status().isCreated());
 
-        verify(invoiceService, times(1)).updateInvoice(invoice);
-
+        verify(service, times(1)).updateCashReceipt(cashReceipt);
     }
 
     @Test
-    void updateInvoiceByIdIncorrectBindingResult() throws Exception {
-        Invoice invoice = createInvoice();
-        invoice.setId(null);
+    void updateCashReceiptByIdInvalid() throws Exception{
+
+        CashReceipt cashReceipt = createCashReceipt();
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        ResponseEntity<Invoice> noResult = controller.updateInvoiceById(1l, invoice, bindingResult);
+        ResponseEntity<CashReceipt> noResult = controller
+                .updateCashReceiptById(1L, cashReceipt, bindingResult);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, noResult.getStatusCode());
         Assertions.assertNull(noResult.getBody());
-        verifyNoInteractions(invoiceService);
+        verifyNoInteractions(service);
     }
 
     @Test
-    void deleteInvoiceById() throws Exception {
-        Optional<Invoice> invoice = Optional.of(createInvoice());
-        when(invoiceService.findInvoiceById(anyLong())).thenReturn(invoice);
-        when(invoiceService.isItLastInvoice(invoice.get())).thenReturn(true);
+    void deleteCashReceiptById() throws Exception {
+        Optional<CashReceipt> cashReceipt = Optional.of(createCashReceipt());
+        when(service.findCashReceiptById(anyLong())).thenReturn(cashReceipt);
+        when(service.isItLastCashReceipt(cashReceipt.get())).thenReturn(true);
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/1")
-                        .content(asJsonString(invoice))
+                        .content(asJsonString(cashReceipt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        verify(invoiceService, times(1)).deleteInvoiceById(anyLong());
+        verify(service, times(1)).deleteCashReceiptById(anyLong());
     }
 
     @Test
-    void deleteInvoiceByIdInvalidNotLastInvoice() throws Exception {
-        Optional<Invoice> invoice = Optional.of(createInvoice());
-        when(invoiceService.findInvoiceById(anyLong())).thenReturn(invoice);
-        when(invoiceService.isItLastInvoice(invoice.get())).thenReturn(false);
+    void deleteCashReceiptByIdInvalidNotLastCashReceipt() throws Exception {
+        Optional<CashReceipt> cashReceipt = Optional.of(createCashReceipt());
+        when(service.findCashReceiptById(anyLong())).thenReturn(cashReceipt);
+        when(service.isItLastCashReceipt(cashReceipt.get())).thenReturn(false);
 
         ResultActions mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/1")
-                        .content(asJsonString(invoice))
+                        .content(asJsonString(cashReceipt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(invoiceService, times(0)).deleteInvoiceById(anyLong());
+        verify(service, times(0)).deleteCashReceiptById(anyLong());
     }
-
     @Test
-    void deleteInvoiceByIdInvalidId() throws Exception {
-        when(invoiceService.findInvoiceById(anyLong())).thenReturn(Optional.empty());
+    void deleteCashReceiptByIdInvalidId() throws Exception {
+        when(service.findCashReceiptById(anyLong())).thenReturn(Optional.empty());
         ResultActions mvcRes = mockMvc.perform(MockMvcRequestBuilders
                         .delete(URL + "/333"))
                 .andExpect(status().isNotFound());
 
-        verify(invoiceService, times(0)).deleteInvoiceById(anyLong());
+        verify(service, times(0)).deleteCashReceiptById(anyLong());
     }
 
+    private List<CashReceipt> createCashReceiptList() {
+        List<CashReceipt> cashReceiptList = new ArrayList<>();
+        cashReceiptList.add(createCashReceipt());
+        cashReceiptList.add(createCashReceipt());
+        return cashReceiptList;
+    }
+
+    private CashReceipt createCashReceipt() {
+        CashReceipt cashReceipt = new CashReceipt();
+        cashReceipt.setId(1L);
+        cashReceipt.setDate("2024-03-07");
+        cashReceipt.setNumber("T24 Nr.10");
+        cashReceipt.setAmount(220f);
+        cashReceipt.setInvoice(createInvoice());
+        return cashReceipt;
+    }
 
     private Invoice createInvoice() {
         Invoice invoice = new Invoice();
@@ -227,14 +267,6 @@ class InvoiceControllerTest {
         invoice.setClientAddress("Vilnius, Vilniaus g.1");
         invoice.setClientName("Vytautas Brangiausias");
         return invoice;
-    }
-
-
-    private List<Invoice> createInvoiceList() {
-        List<Invoice> invoices = new ArrayList<>();
-        invoices.add(createInvoice());
-        invoices.add(createInvoice());
-        return invoices;
     }
 
     public static String asJsonString(final Object obj) {

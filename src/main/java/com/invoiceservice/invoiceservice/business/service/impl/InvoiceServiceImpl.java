@@ -77,11 +77,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public boolean isItLastInvoice (Invoice invoice){
+    public boolean isItLastInvoice(Invoice invoice) {
         return invoice.getNumber().equals(documentService.buildPreviousInvoiceNumber());
     }
 
-    private boolean hasNoMatch(Invoice invoice) {
+    boolean hasNoMatch(Invoice invoice) {
         return invoiceRepository.findAll().stream()
                 .noneMatch(invoiceDAO -> !invoiceDAO.getId().equals(invoice.getId()) &&
                         invoiceDAO.getNumber().equalsIgnoreCase(invoice.getNumber()));

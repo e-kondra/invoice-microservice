@@ -111,7 +111,7 @@ public class InvoiceController {
         log.info("Update existing invoice with ID: {} and new body: {}", id, invoice);
         if (bindingResult.hasErrors() || !id.equals(invoice.getId())) {
             log.warn("Invoice for update with id {} not found", id);
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
         }
         invoiceService.updateInvoice(invoice);
         log.debug("Invoice with id {} is updated: {}", id, invoice);

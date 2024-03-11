@@ -93,7 +93,7 @@ public class CashReceiptServiceImpl implements CashReceiptService {
         return cashReceipt.getNumber().equals(documentService.buildPreviousCashReceiptNumber());
     }
 
-    private boolean hasNoMatch(CashReceipt cashReceipt) {
+    boolean hasNoMatch(CashReceipt cashReceipt) {
         return repository.findAll().stream()
                     .noneMatch(receiptDAO -> !receiptDAO.getId().equals(cashReceipt.getId()) &&
                             receiptDAO.getNumber().equalsIgnoreCase(cashReceipt.getNumber()));

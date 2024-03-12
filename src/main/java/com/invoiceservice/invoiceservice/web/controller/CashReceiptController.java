@@ -113,7 +113,8 @@ public class CashReceiptController {
         log.info("Create new cash receipt by passing : {}", cashReceipt);
         if (bindingResult.hasErrors()) {
             log.error("New cash receipt is not created: error {}", bindingResult);
-            return ResponseEntity.badRequest().build();}
+            return ResponseEntity.badRequest().build();
+        }
         CashReceipt receiptSaved = service.saveCashReceipt(cashReceipt);
         log.debug("New cash receipt is created: {}", receiptSaved);
         return new ResponseEntity<>(receiptSaved, HttpStatus.CREATED);
@@ -135,7 +136,8 @@ public class CashReceiptController {
         log.info("Update existing cash receipt with ID: {} and new body: {}", id, cashReceipt);
         if (bindingResult.hasErrors() || !id.equals(cashReceipt.getId())) {
             log.warn("Cash receipt for update with id {} not found", id);
-            return ResponseEntity.badRequest().build();}
+            return ResponseEntity.badRequest().build();
+        }
         service.updateCashReceipt(cashReceipt);
         log.debug("Cash receipt with id {} is updated: {}", id, cashReceipt);
         return new ResponseEntity<>(cashReceipt, HttpStatus.CREATED);
@@ -157,14 +159,14 @@ public class CashReceiptController {
         Optional<CashReceipt> receipt = service.findCashReceiptById(id);
         if (!receipt.isPresent()) {
             log.warn("Cash receipt for delete with id {} is not found.", id);
-            return ResponseEntity.notFound().build();}
+            return ResponseEntity.notFound().build();
+        }
         if (service.isItLastCashReceipt(receipt.get())) {
             service.deleteCashReceiptById(id);
             log.debug("Cash receipt with id {} is deleted: {}", id, receipt);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            log.debug("Cash receipt with id {}, {} couldn't be deleted", id, receipt.get().getNumber());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        log.debug("Cash receipt with id {}, {} couldn't be deleted", id, receipt.get().getNumber());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

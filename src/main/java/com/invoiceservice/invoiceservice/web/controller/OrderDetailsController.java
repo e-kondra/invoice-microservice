@@ -52,10 +52,10 @@ public class OrderDetailsController {
             @ApiResponse(code = 500, message = HTMLResponseMessages.HTTP_500)})
     public ResponseEntity<List<OrderDetails>> findOrderDetailsByInvoiceId(@ApiParam(value = "id of the invoice", required = true)
                                                                               @NonNull @PathVariable Long id) {
-        Optional<Invoice> invoice = (invoiceService.findInvoiceById(id));
+        Optional<Invoice> invoice = invoiceService.findInvoiceById(id);
         if (invoice.isEmpty()) {
             log.warn("Invoice with id {} is not found.", id);
-            ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
         else log.debug("Invoice with id {} is found: {}", id, invoice);
 

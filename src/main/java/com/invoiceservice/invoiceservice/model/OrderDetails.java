@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class OrderDetails {
 
     @ApiModelProperty(notes = "The unique id of the order details")
-    @NonNull
     private Long id;
 
     @ApiModelProperty(notes = "job description")

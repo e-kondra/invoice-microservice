@@ -31,6 +31,7 @@ class DocumentNumberServiceImplTest {
     @Mock
     DocumentNumberMapStructMapper mapper;
 
+
     DocumentNumber documentNumber;
     DocumentNumberDAO documentNumberDAO;
 
@@ -71,40 +72,69 @@ class DocumentNumberServiceImplTest {
     void buildInvoiceNumber() {
         assertEquals("T24 Nr.10", service.buildInvoiceNumber(documentNumber));
     }
-
     @Test
     void buildCashReceiptNumber() {
         assertEquals("Serija TET24 Nr.5", service.buildCashReceiptNumber(documentNumber));
     }
-//    @Test
-//    void increaseInvoiceNumber() {
-//        documentNumber.setInvoiceNumber(documentNumber.getInvoiceNumber() +1);
-//        documentNumberDAO.setInvoiceNumber(documentNumberDAO.getInvoiceNumber() +1);
-//        when(mapper.documentNumberToDocumentNumberDAO(documentNumber)).thenReturn(documentNumberDAO);
-//        when(repository.save(documentNumberDAO)).thenReturn(documentNumberDAO);
-//        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
-//        service.increaseInvoiceNumber();
-//        assertEquals(11, service.getDocumentNumber().get().getInvoiceNumber());
-//        verify(repository,times(1)).save(documentNumberDAO);
-//    }
+    @Test
+    void increaseInvoiceNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+        when(mapper.documentNumberToDocumentNumberDAO(documentNumber)).thenReturn(documentNumberDAO);
+
+        service.increaseInvoiceNumber();
+        verify(repository, times(1)).save(documentNumberDAO);
+    }
 
     @Test
     void decreaseInvoiceNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+        when(mapper.documentNumberToDocumentNumberDAO(documentNumber)).thenReturn(documentNumberDAO);
+
+        service.decreaseInvoiceNumber();
+        verify(repository, times(1)).save(documentNumberDAO);
     }
 
     @Test
     void increaseCashReceiptNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+        when(mapper.documentNumberToDocumentNumberDAO(documentNumber)).thenReturn(documentNumberDAO);
+
+        service.increaseCashReceiptNumber();
+        verify(repository, times(1)).save(documentNumberDAO);
     }
 
     @Test
     void decreaseCashReceiptNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+        when(mapper.documentNumberToDocumentNumberDAO(documentNumber)).thenReturn(documentNumberDAO);
+
+        service.decreaseCashReceiptNumber();
+        verify(repository, times(1)).save(documentNumberDAO);
     }
 
     @Test
     void buildPreviousInvoiceNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+
+        assertEquals("T24 Nr.9", service.buildPreviousInvoiceNumber());
     }
 
     @Test
     void buildPreviousCashReceiptNumber() {
+        when(service.getDocumentNumber()).thenReturn(Optional.of(documentNumber));
+        when(repository.findById(documentNumber.getId())).thenReturn(Optional.of(documentNumberDAO));
+        when(mapper.documentNumberDAOToDocumentNumber(documentNumberDAO)).thenReturn(documentNumber);
+
+        assertEquals("Serija TET24 Nr.4", service.buildPreviousCashReceiptNumber());
     }
 }

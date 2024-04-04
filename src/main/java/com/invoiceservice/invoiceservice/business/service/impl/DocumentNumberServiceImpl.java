@@ -45,9 +45,11 @@ public class DocumentNumberServiceImpl implements DocumentNumberService {
     }
 
     public void increaseInvoiceNumber(){
-        Optional<DocumentNumber> documentNumber = getDocumentNumber();
-        documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() +1);
-        repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
+        Optional<DocumentNumber> documentNumber = this.getDocumentNumber();
+        if(!documentNumber.isEmpty()) {
+            documentNumber.get().setInvoiceNumber(documentNumber.get().getInvoiceNumber() + 1);
+            repository.save(mapper.documentNumberToDocumentNumberDAO(documentNumber.get()));
+        }
     }
 
     public void decreaseInvoiceNumber(){
